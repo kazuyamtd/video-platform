@@ -1,0 +1,1 @@
+ALTER TABLE `lesson_attachment` DROP COLUMN `r2_key`;

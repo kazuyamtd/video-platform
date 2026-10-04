@@ -1,12 +1,13 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { lesson } from "@/db/schema";
+import { lesson, lessonAttachment } from "@/db/schema";
 import { requireAdmin } from "@/lib/session";
 import { deleteLesson } from "../../actions";
 import { DeleteButton } from "../../delete-button";
+import { AttachmentManager } from "./attachment-manager";
 import { LessonForm } from "./lesson-form";
 
 export const metadata: Metadata = { title: "レッスンの編集" };
@@ -16,10 +17,16 @@ export default async function AdminLessonPage({ params }: PageProps<"/admin/less
   const { id } = await params;
   const found = await db.query.lesson.findFirst({
     where: eq(lesson.id, id),
-    with: { section: { with: { course: { columns: { id: true, title: true } } } } },
+    with: {
+      section: { with: { course: { columns: { id: true, title: true } } } },
+      attachments: {
+        columns: { id: true, fileName: true, sizeBytes: true },
+        orderBy: asc(lessonAttachment.createdAt),
+      },
+    },
   });
   if (!found) notFound();
-  const { section, ...lessonRow } = found;
+  const { section, attachments, ...lessonRow } = found;
 
   return (
     <div className="space-y-6">
@@ -36,6 +43,7 @@ export default async function AdminLessonPage({ params }: PageProps<"/admin/less
         </div>
       </div>
       <LessonForm lesson={lessonRow} />
+      <AttachmentManager lessonId={found.id} attachments={attachments} />
     </div>
   );
 }

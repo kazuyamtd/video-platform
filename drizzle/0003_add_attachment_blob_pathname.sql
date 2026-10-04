@@ -1,0 +1,1 @@
+ALTER TABLE `lesson_attachment` ADD `blob_pathname` text NOT NULL;

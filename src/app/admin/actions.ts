@@ -1,12 +1,25 @@
 "use server";
 
-import { asc, count, eq, max } from "drizzle-orm";
+import { asc, count, eq, max, type SQL } from "drizzle-orm";
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
-import { ACCESS_TYPES, course, lesson, purchase, section } from "@/db/schema";
-import { deleteBlobIfUnused } from "@/lib/blob";
+import { head } from "@vercel/blob";
+import {
+  ACCESS_TYPES,
+  course,
+  lesson,
+  lessonAttachment,
+  purchase,
+  section,
+} from "@/db/schema";
+import {
+  attachmentsToken,
+  deleteAttachmentBlobs,
+  deleteBlobIfUnused,
+} from "@/lib/blob";
+import { attachmentExtension, isAttachmentPathname } from "@/lib/constants";
 import { requireAdmin } from "@/lib/session";
 import { fetchVimeoDuration, parseVimeoInput } from "@/lib/vimeo";
 
@@ -54,6 +67,17 @@ async function slugTaken(slug: string, exceptId?: string) {
     columns: { id: true },
   });
   return !!found && found.id !== exceptId;
+}
+
+/** 削除対象に含まれる添付ファイルの保存先パス（行の削除はカスケードされるので、先に集めておく） */
+async function attachmentPathnames(where: SQL | undefined) {
+  const rows = await db
+    .select({ pathname: lessonAttachment.blobPathname })
+    .from(lessonAttachment)
+    .innerJoin(lesson, eq(lessonAttachment.lessonId, lesson.id))
+    .innerJoin(section, eq(lesson.sectionId, section.id))
+    .where(where);
+  return rows.map((r) => r.pathname);
 }
 
 // ---------- 講座 ----------
@@ -108,11 +132,13 @@ export async function deleteCourse(courseId: string): Promise<ActionState> {
   if (purchases > 0) {
     return { error: "購入者がいる講座は削除できません。非公開にしてください。" };
   }
+  const pathnames = await attachmentPathnames(eq(section.courseId, courseId));
   const [deleted] = await db
     .delete(course)
     .where(eq(course.id, courseId))
     .returning({ thumbnailUrl: course.thumbnailUrl });
   await deleteBlobIfUnused(deleted?.thumbnailUrl ?? null);
+  await deleteAttachmentBlobs(pathnames);
   redirect("/admin/courses");
 }
 
@@ -140,7 +166,9 @@ export async function renameSection(sectionId: string, formData: FormData) {
 
 export async function deleteSection(sectionId: string) {
   await requireAdmin();
+  const pathnames = await attachmentPathnames(eq(section.id, sectionId));
   await db.delete(section).where(eq(section.id, sectionId));
+  await deleteAttachmentBlobs(pathnames);
   refresh();
 }
 
@@ -220,7 +248,9 @@ export async function deleteLesson(lessonId: string): Promise<ActionState> {
     with: { section: { columns: { courseId: true } } },
   });
   if (!target) return { error: "レッスンが見つかりません" };
+  const pathnames = await attachmentPathnames(eq(lesson.id, lessonId));
   await db.delete(lesson).where(eq(lesson.id, lessonId));
+  await deleteAttachmentBlobs(pathnames);
   redirect(`/admin/courses/${target.section.courseId}`);
 }
 
@@ -255,4 +285,50 @@ async function reorder(
   [ids[from], ids[to]] = [ids[to], ids[from]];
   const [first, ...others] = ids.map((sid, i) => update(sid, i));
   await db.batch([first, ...others]);
+}
+
+// ---------- 添付ファイル ----------
+
+/** ブラウザから Blob へのアップロードが終わったあとに、添付ファイルとして登録する */
+export async function addAttachment(
+  lessonId: string,
+  upload: { pathname: string; fileName: string },
+): Promise<ActionState> {
+  await requireAdmin();
+  const fileName = upload.fileName.trim().slice(0, 200);
+  if (!fileName || !attachmentExtension(fileName) || !isAttachmentPathname(upload.pathname, lessonId)) {
+    return { error: "ファイルの情報が正しくありません" };
+  }
+  const target = await db.query.lesson.findFirst({
+    where: eq(lesson.id, lessonId),
+    columns: { id: true },
+  });
+  if (!target) return { error: "レッスンが見つかりません" };
+
+  // サイズはクライアントの申告ではなく、実際に保存されたファイルから取る
+  let sizeBytes: number;
+  try {
+    sizeBytes = (await head(upload.pathname, { token: attachmentsToken() })).size;
+  } catch {
+    return { error: "アップロードされたファイルが見つかりません" };
+  }
+
+  await db.insert(lessonAttachment).values({
+    lessonId,
+    fileName,
+    blobPathname: upload.pathname,
+    sizeBytes,
+  });
+  refresh();
+  return { message: `${fileName} を追加しました` };
+}
+
+export async function deleteAttachment(attachmentId: string) {
+  await requireAdmin();
+  const [deleted] = await db
+    .delete(lessonAttachment)
+    .where(eq(lessonAttachment.id, attachmentId))
+    .returning({ pathname: lessonAttachment.blobPathname });
+  if (deleted) await deleteAttachmentBlobs([deleted.pathname]);
+  refresh();
 }

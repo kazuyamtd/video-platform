@@ -15,6 +15,20 @@
       "when": 1791082251612,
       "tag": "0001_secret_ultimatum",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791109821764,
+      "tag": "0002_drop_attachment_r2_key",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1791109824045,
+      "tag": "0003_add_attachment_blob_pathname",
+      "breakpoints": true
     }
   ]
 }

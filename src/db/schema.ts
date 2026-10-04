@@ -90,7 +90,8 @@ export const lessonAttachment = sqliteTable(
       .notNull()
       .references(() => lesson.id, { onDelete: "cascade" }),
     fileName: text("file_name").notNull(),
-    r2Key: text("r2_key").notNull(),
+    // 非公開の Vercel Blob ストア上のパス（ASCII のみ。元のファイル名は fileName に保存）
+    blobPathname: text("blob_pathname").notNull(),
     sizeBytes: integer("size_bytes").notNull(),
     ...timestamps,
   },

@@ -1,14 +1,15 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AccessCta } from "@/components/access-cta";
+import { AttachmentList } from "@/components/attachment-list";
 import { LessonOutline } from "@/components/lesson-outline";
 import { buttonVariants } from "@/components/ui/button";
 import { LessonViewer } from "@/components/lesson-viewer";
 import { Markdown } from "@/components/markdown";
 import { db } from "@/db";
-import { lesson as lessonTable } from "@/db/schema";
+import { lessonAttachment, lesson as lessonTable } from "@/db/schema";
 import { canAccessCourse, canAccessLesson } from "@/lib/access";
 import { flattenLessons, getCourseOutline } from "@/lib/courses";
 import { getProgressMap } from "@/lib/progress";
@@ -44,9 +45,17 @@ export default async function LessonPage(props: Props) {
   const meta = lessons[index];
   const accessible = canAccessLesson(outline, meta, viewer);
 
-  // 権限があるときだけ Vimeo ID と本文を読み込む
+  // 権限があるときだけ Vimeo ID・本文・添付ファイルを読み込む
   const lesson = accessible
-    ? await db.query.lesson.findFirst({ where: eq(lessonTable.id, meta.id) })
+    ? await db.query.lesson.findFirst({
+        where: eq(lessonTable.id, meta.id),
+        with: {
+          attachments: {
+            columns: { id: true, fileName: true, sizeBytes: true },
+            orderBy: asc(lessonAttachment.createdAt),
+          },
+        },
+      })
     : null;
 
   const progress = viewer
@@ -79,6 +88,9 @@ export default async function LessonPage(props: Props) {
 
         <h1 className="mt-6 text-2xl font-bold">{meta.title}</h1>
         {lesson?.bodyMarkdown && <Markdown className="mt-4">{lesson.bodyMarkdown}</Markdown>}
+        {lesson && lesson.attachments.length > 0 && (
+          <AttachmentList attachments={lesson.attachments} />
+        )}
 
         <div className="mt-8 flex justify-between gap-4">
           {prev ? (
