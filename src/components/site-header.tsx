@@ -19,7 +19,7 @@ export async function SiteHeader() {
           </Link>
           {/* スマホではフッターから辿る */}
           <Link href="/pricing" className="hidden hover:text-ink sm:inline">
-            料金プラン
+            サブスクプラン
           </Link>
           {session && (
             <Link href="/account/purchases" className="hidden hover:text-ink sm:inline">
