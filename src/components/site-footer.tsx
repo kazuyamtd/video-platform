@@ -16,7 +16,7 @@ export function SiteFooter() {
             講座一覧
           </Link>
           <Link href="/pricing" className="hover:text-white">
-            料金プラン
+            サブスクプラン
           </Link>
         </nav>
       </div>

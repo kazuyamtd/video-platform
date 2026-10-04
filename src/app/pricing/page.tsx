@@ -11,7 +11,7 @@ import { safeCallback } from "@/lib/safe-callback";
 import { getActiveSubscription, getSession } from "@/lib/session";
 import { ManageSubscriptionButton, SubscribeButton } from "./subscription-buttons";
 
-export const metadata: Metadata = { title: "料金プラン" };
+export const metadata: Metadata = { title: "サブスクプラン" };
 
 const dateFormat = new Intl.DateTimeFormat("ja-JP", {
   dateStyle: "long",
@@ -53,7 +53,7 @@ export default async function PricingPage({ searchParams }: PageProps<"/pricing"
 
   return (
     <div className="mx-auto max-w-xl px-4 py-12 sm:py-16">
-      <h1 className="text-3xl font-black sm:text-4xl">料金プラン</h1>
+      <h1 className="text-3xl font-black sm:text-4xl">サブスクプラン</h1>
       <p className="mt-3 text-pebble">
         無料・買い切りの講座は、この登録なしでも受講できます。
       </p>

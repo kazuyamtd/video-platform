@@ -114,7 +114,7 @@ export default async function HomePage() {
               月額{formatPrice(SUBSCRIPTION_PLAN.priceJpy)}で対象講座がすべて見放題。初回は
               {SUBSCRIPTION_PLAN.trialDays}日間無料で試せます。{" "}
               <Link href="/pricing" className="font-bold underline decoration-beak decoration-2 underline-offset-4">
-                料金プラン
+                サブスクプラン
               </Link>
             </dd>
           </div>
