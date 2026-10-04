@@ -10,6 +10,7 @@ import type { Course } from "@/db/schema";
 import { ACCESS_TYPES } from "@/lib/constants";
 import { ACCESS_LABELS } from "@/lib/format";
 import { updateCourse } from "../../actions";
+import { ThumbnailField } from "./thumbnail-field";
 
 const selectClass =
   "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -33,14 +34,8 @@ export function CourseForm({ course }: { course: Course }) {
       <Field label="説明" name="description">
         <Textarea id="description" name="description" rows={4} defaultValue={course.description} />
       </Field>
-      <Field label="サムネイル画像URL" name="thumbnailUrl">
-        <Input
-          id="thumbnailUrl"
-          name="thumbnailUrl"
-          type="url"
-          defaultValue={course.thumbnailUrl ?? ""}
-          placeholder="https://..."
-        />
+      <Field label="サムネイル画像" name="thumbnailUrl">
+        <ThumbnailField courseId={course.id} defaultValue={course.thumbnailUrl ?? ""} />
       </Field>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="受講方式" name="accessType">

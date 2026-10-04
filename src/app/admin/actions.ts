@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { ACCESS_TYPES, course, lesson, purchase, section } from "@/db/schema";
+import { deleteBlobIfUnused } from "@/lib/blob";
 import { requireAdmin } from "@/lib/session";
 import { fetchVimeoDuration, parseVimeoInput } from "@/lib/vimeo";
 
@@ -88,7 +89,12 @@ export async function updateCourse(
   if (!parsed.success) return { error: firstError(parsed.error) };
   if (await slugTaken(parsed.data.slug, courseId)) return { error: "このスラッグは既に使われています" };
 
+  const before = await db.query.course.findFirst({
+    where: eq(course.id, courseId),
+    columns: { thumbnailUrl: true },
+  });
   await db.update(course).set(parsed.data).where(eq(course.id, courseId));
+  await deleteBlobIfUnused(before?.thumbnailUrl ?? null, parsed.data.thumbnailUrl);
   refresh();
   return { message: "保存しました" };
 }
@@ -102,7 +108,11 @@ export async function deleteCourse(courseId: string): Promise<ActionState> {
   if (purchases > 0) {
     return { error: "購入者がいる講座は削除できません。非公開にしてください。" };
   }
-  await db.delete(course).where(eq(course.id, courseId));
+  const [deleted] = await db
+    .delete(course)
+    .where(eq(course.id, courseId))
+    .returning({ thumbnailUrl: course.thumbnailUrl });
+  await deleteBlobIfUnused(deleted?.thumbnailUrl ?? null);
   redirect("/admin/courses");
 }
 
