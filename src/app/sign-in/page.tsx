@@ -13,10 +13,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
 
   return (
     <AuthCard title="ログイン">
-      <SignInForm
-        callbackURL={callbackURL}
-        googleEnabled={!!process.env.GOOGLE_CLIENT_ID}
-      />
+      <SignInForm callbackURL={callbackURL} />
     </AuthCard>
   );
 }

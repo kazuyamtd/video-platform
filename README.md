@@ -33,11 +33,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 | 変数 | 未設定のとき |
 |---|---|
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google ログインボタンを表示しない |
 | `RESEND_API_KEY` / `EMAIL_FROM` | メールをコンソールに出力する |
 | `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | `file:local.db` を使う（本番は Turso の URL とトークン） |
-
-Google OAuth のリダイレクトURIは `http://localhost:3000/api/auth/callback/google`。
 
 ## Stripe（決済）
 

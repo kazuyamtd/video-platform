@@ -4,19 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormMessage } from "@/components/auth-card";
-import { GoogleButton } from "@/components/google-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 
-export function SignInForm({
-  callbackURL,
-  googleEnabled,
-}: {
-  callbackURL: string;
-  googleEnabled: boolean;
-}) {
+export function SignInForm({ callbackURL }: { callbackURL: string }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -72,7 +65,6 @@ export function SignInForm({
           {pending ? "ログイン中…" : "ログイン"}
         </Button>
       </form>
-      {googleEnabled && <GoogleButton callbackURL={callbackURL} />}
       <p className="text-center text-sm text-muted-foreground">
         アカウントをお持ちでない方は{" "}
         <Link

@@ -9,9 +9,6 @@ import { sendEmail } from "@/lib/email";
 import { SUBSCRIPTION_PLAN } from "@/lib/plan";
 import { stripe } from "@/lib/stripe";
 
-const googleEnabled =
-  !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
-
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "sqlite", schema }),
   emailAndPassword: {
@@ -38,14 +35,6 @@ export const auth = betterAuth({
       });
     },
   },
-  socialProviders: googleEnabled
-    ? {
-        google: {
-          clientId: process.env.GOOGLE_CLIENT_ID!,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        },
-      }
-    : undefined,
   plugins: [
     admin(),
     // Stripe からの通知は /api/stripe/webhook で受け、サブスク関連だけこのプラグインへ転送する

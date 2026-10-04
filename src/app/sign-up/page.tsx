@@ -16,10 +16,7 @@ export default async function SignUpPage({ searchParams }: PageProps<"/sign-up">
       title="新規登録"
       description="登録後、確認メールのリンクを開くと受講を始められます。"
     >
-      <SignUpForm
-        callbackURL={callbackURL}
-        googleEnabled={!!process.env.GOOGLE_CLIENT_ID}
-      />
+      <SignUpForm callbackURL={callbackURL} />
     </AuthCard>
   );
 }

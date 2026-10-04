@@ -3,19 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FormMessage } from "@/components/auth-card";
-import { GoogleButton } from "@/components/google-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 
-export function SignUpForm({
-  callbackURL,
-  googleEnabled,
-}: {
-  callbackURL: string;
-  googleEnabled: boolean;
-}) {
+export function SignUpForm({ callbackURL }: { callbackURL: string }) {
   const [error, setError] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -80,7 +73,6 @@ export function SignUpForm({
           {pending ? "送信中…" : "登録する"}
         </Button>
       </form>
-      {googleEnabled && <GoogleButton callbackURL={callbackURL} />}
       <p className="text-center text-sm text-muted-foreground">
         登録済みの方は{" "}
         <Link
