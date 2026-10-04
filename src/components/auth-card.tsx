@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   Card,
@@ -6,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FullLogo } from "./penguin-mark";
 
 export function AuthCard({
   title,
@@ -17,10 +19,13 @@ export function AuthCard({
   children: ReactNode;
 }) {
   return (
-    <div className="mx-auto w-full max-w-sm px-4 py-16">
-      <Card>
+    <div className="mx-auto w-full max-w-sm px-4 py-12 sm:py-16">
+      <Link href="/" aria-label="ペンギンラボ トップへ" className="mx-auto mb-6 block w-fit">
+        <FullLogo width={150} />
+      </Link>
+      <Card className="rounded-3xl p-2 ring-border">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="text-2xl font-black">{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
         <CardContent>{children}</CardContent>

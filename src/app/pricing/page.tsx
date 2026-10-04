@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { and, asc, eq, isNotNull, or } from "drizzle-orm";
 import { buttonVariants } from "@/components/ui/button";
@@ -51,26 +52,37 @@ export default async function PricingPage({ searchParams }: PageProps<"/pricing"
   const trialAvailable = !trialUsed;
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-10">
-      <h1 className="text-center text-3xl font-bold">料金プラン</h1>
+    <div className="mx-auto max-w-xl px-4 py-12 sm:py-16">
+      <h1 className="text-3xl font-black sm:text-4xl">料金プラン</h1>
+      <p className="mt-3 text-pebble">
+        無料・買い切りの講座は、この登録なしでも受講できます。
+      </p>
 
-      <div className="mt-8 rounded-xl border p-6">
-        <h2 className="text-lg font-semibold">{SUBSCRIPTION_PLAN.label}</h2>
-        <p className="mt-2">
-          <span className="text-3xl font-bold">{formatPrice(SUBSCRIPTION_PLAN.priceJpy)}</span>
-          <span className="text-muted-foreground"> / 月</span>
+      <div className="mt-8 rounded-3xl bg-floe p-6 sm:p-8">
+        <h2 className="text-xl font-bold">{SUBSCRIPTION_PLAN.label}</h2>
+        <p className="mt-3 flex items-baseline gap-1">
+          <span className="font-heading text-5xl font-black">
+            {formatPrice(SUBSCRIPTION_PLAN.priceJpy)}
+          </span>
+          <span className="font-bold text-pebble">/ 月（税込）</span>
         </p>
         {!active && trialAvailable && (
-          <p className="mt-2 text-sm font-medium text-emerald-700">
+          <p className="mt-4 inline-block rounded-xl bg-white px-3 py-2 text-sm font-bold">
             初回登録は{SUBSCRIPTION_PLAN.trialDays}日間無料。期間内に解約すれば料金はかかりません。
           </p>
         )}
-        <ul className="mt-4 list-inside list-disc space-y-1 text-sm text-muted-foreground">
-          <li>サブスク対象の講座がすべて見放題</li>
-          <li>いつでも解約できます（次回更新日まで視聴できます）</li>
+        <ul className="mt-5 space-y-2">
+          {["サブスク対象の講座がすべて見放題", "いつでも解約できます（次回更新日まで視聴できます）"].map(
+            (text) => (
+              <li key={text} className="flex gap-2">
+                <CheckIcon className="mt-0.5 size-5 shrink-0 rounded-full bg-beak p-0.5" />
+                <span>{text}</span>
+              </li>
+            ),
+          )}
         </ul>
 
-        <div className="mt-6">
+        <div className="mt-8">
           {active ? (
             <div className="space-y-4">
               <SubscriptionStatus subscription={active} />
@@ -88,7 +100,7 @@ export default async function PricingPage({ searchParams }: PageProps<"/pricing"
           ) : (
             <Link
               href={`/sign-in?callbackURL=${encodeURIComponent("/pricing")}`}
-              className={buttonVariants({ size: "lg", className: "w-full" })}
+              className={buttonVariants({ variant: "cta", size: "lg", className: "w-full" })}
             >
               ログインして登録する
             </Link>
@@ -98,11 +110,11 @@ export default async function PricingPage({ searchParams }: PageProps<"/pricing"
 
       {courses.length > 0 && (
         <div className="mt-10">
-          <h2 className="font-semibold">見放題の対象講座</h2>
-          <ul className="mt-3 space-y-2">
+          <h2 className="text-xl font-bold">見放題の対象講座</h2>
+          <ul className="mt-4 divide-y overflow-hidden rounded-2xl border">
             {courses.map((c) => (
               <li key={c.slug}>
-                <Link href={`/courses/${c.slug}`} className="hover:underline">
+                <Link href={`/courses/${c.slug}`} className="block px-4 py-3 hover:bg-muted">
                   {c.title}
                 </Link>
               </li>
@@ -130,8 +142,8 @@ function SubscriptionStatus({
   }
 
   return (
-    <div className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
-      <p className="font-medium">ご契約中です</p>
+    <div className="rounded-xl bg-white px-4 py-3 text-sm">
+      <p className="font-bold">ご契約中です</p>
       {detail && <p className="mt-1">{detail}</p>}
     </div>
   );

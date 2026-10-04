@@ -13,7 +13,7 @@ import { updateCourse } from "../../actions";
 import { ThumbnailField } from "./thumbnail-field";
 
 const selectClass =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+  "h-10 w-full rounded-md border border-input bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
 export function CourseForm({ course }: { course: Course }) {
   const [state, action, pending] = useActionState(

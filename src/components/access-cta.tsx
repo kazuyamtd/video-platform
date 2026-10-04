@@ -19,7 +19,7 @@ export function AccessCta({
     return (
       <Link
         href={`/sign-in?callbackURL=${encodeURIComponent(callbackPath)}`}
-        className={buttonVariants({ size: "lg" })}
+        className={buttonVariants({ variant: "cta", size: "lg" })}
       >
         ログインして受講する（無料）
       </Link>
@@ -30,7 +30,7 @@ export function AccessCta({
     // 未ログインの場合はアクション側でログイン画面へ送る
     return (
       <form action={startCourseCheckout.bind(null, course.id, callbackPath)}>
-        <Button type="submit" size="lg" disabled={course.priceJpy == null}>
+        <Button type="submit" variant="cta" size="lg" disabled={course.priceJpy == null}>
           {course.priceJpy != null ? `${formatPrice(course.priceJpy)}で購入する` : "購入（価格未設定）"}
         </Button>
       </form>
@@ -39,7 +39,7 @@ export function AccessCta({
   return (
     <Link
       href={`/pricing?callbackURL=${encodeURIComponent(callbackPath)}`}
-      className={buttonVariants({ size: "lg" })}
+      className={buttonVariants({ variant: "cta", size: "lg" })}
     >
       サブスクに登録して受講する
     </Link>

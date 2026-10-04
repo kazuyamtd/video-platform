@@ -25,8 +25,8 @@ export function LessonOutline({
     <div className="space-y-6">
       {outline.sections.map((s) => (
         <div key={s.id}>
-          <h3 className="mb-2 text-sm font-semibold">{s.title}</h3>
-          <ul className="divide-y rounded-lg border">
+          <h3 className="mb-2 font-bold">{s.title}</h3>
+          <ul className="divide-y overflow-hidden rounded-2xl border">
             {s.lessons.map((l) => {
               const open = courseAccessible || l.isPreview;
               return (
@@ -34,8 +34,8 @@ export function LessonOutline({
                   <Link
                     href={`/courses/${outline.slug}/lessons/${l.id}`}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-muted",
-                      l.id === currentLessonId && "bg-muted font-medium",
+                      "flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted",
+                      l.id === currentLessonId && "bg-floe font-bold hover:bg-floe",
                     )}
                   >
                     {progress?.get(l.id)?.completedAt ? (
@@ -50,7 +50,7 @@ export function LessonOutline({
                     )}
                     <span className="flex-1">{l.title}</span>
                     {!courseAccessible && l.isPreview && (
-                      <Badge variant="outline">プレビュー</Badge>
+                      <Badge className="bg-beak/25 text-ink">無料プレビュー</Badge>
                     )}
                     {l.durationSec != null && (
                       <span className="text-xs text-muted-foreground">

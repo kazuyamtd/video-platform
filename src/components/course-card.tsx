@@ -1,36 +1,37 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import type { Course } from "@/db/schema";
-import { ACCESS_LABELS, formatPrice } from "@/lib/format";
+import { AccessBadge } from "./access-badge";
+import { PenguinMark } from "./penguin-mark";
 
 export function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/courses/${course.slug}`}
-      className="group overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
+      className="group block rounded-2xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring"
     >
-      <div className="aspect-video bg-muted">
-        {course.thumbnailUrl && (
+      <div className="aspect-video overflow-hidden rounded-2xl bg-floe">
+        {course.thumbnailUrl ? (
           // 外部URLのサムネイルを許可するため next/image ではなく img を使う
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={course.thumbnailUrl}
             alt=""
-            className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
           />
+        ) : (
+          <div className="grid h-full place-items-center">
+            <PenguinMark size={64} className="opacity-70" />
+          </div>
         )}
       </div>
-      <div className="space-y-2 p-4">
-        <div className="flex items-center gap-2">
-          <Badge variant={course.accessType === "free" ? "secondary" : "default"}>
-            {ACCESS_LABELS[course.accessType]}
-          </Badge>
-          {course.accessType === "purchase" && course.priceJpy != null && (
-            <span className="text-sm font-medium">{formatPrice(course.priceJpy)}</span>
-          )}
-        </div>
-        <h3 className="font-semibold leading-snug">{course.title}</h3>
-        <p className="line-clamp-2 text-sm text-muted-foreground">{course.description}</p>
+      <div className="mt-3 space-y-1.5 px-1">
+        <AccessBadge course={course} />
+        <h3 className="text-lg font-bold leading-snug group-hover:underline group-hover:decoration-beak group-hover:decoration-2 group-hover:underline-offset-4">
+          {course.title}
+        </h3>
+        {course.description && (
+          <p className="line-clamp-2 text-sm text-muted-foreground">{course.description}</p>
+        )}
       </div>
     </Link>
   );

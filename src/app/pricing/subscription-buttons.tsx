@@ -14,6 +14,7 @@ export function SubscribeButton({ label, successPath }: { label: string; success
   return (
     <div className="space-y-2">
       <Button
+        variant="cta"
         size="lg"
         className="w-full"
         disabled={pending}

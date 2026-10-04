@@ -43,7 +43,7 @@ export function LessonViewer({
       {video ? (
         <VimeoPlayer video={video} />
       ) : (
-        <div className="flex aspect-video items-center justify-center rounded-lg bg-muted text-muted-foreground">
+        <div className="flex aspect-video items-center justify-center rounded-2xl bg-floe text-pebble">
           動画は準備中です
         </div>
       )}

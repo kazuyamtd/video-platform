@@ -8,9 +8,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display);
+  --color-floe: var(--floe);
+  --color-floe-deep: var(--floe-deep);
+  --color-ink: var(--ink);
+  --color-beak: var(--beak);
+  --color-beak-deep: var(--beak-deep);
+  --color-pebble: var(--pebble);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,38 +56,47 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* ペンギンラボ: ペンギンの配色（紺の背中・首元の黄色）と氷の水色 */
+  --snow: #ffffff;
+  --floe: #e7f2fb;
+  --floe-deep: #cfe4f5;
+  --ink: #17325c;
+  --beak: #ffb020;
+  --beak-deep: #f29a00;
+  --pebble: #5a6a85;
+
+  --background: var(--snow);
+  --foreground: var(--ink);
+  --card: var(--snow);
+  --card-foreground: var(--ink);
+  --popover: var(--snow);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--snow);
+  --secondary: var(--floe);
+  --secondary-foreground: var(--ink);
+  --muted: #f2f8fd;
+  --muted-foreground: var(--pebble);
+  --accent: var(--floe);
+  --accent-foreground: var(--ink);
+  --destructive: #d43c4f;
+  --border: #d9e6f2;
+  --input: #c9d9e8;
+  --ring: #3f86d6;
+  --chart-1: var(--ink);
+  --chart-2: var(--beak);
+  --chart-3: #3f86d6;
+  --chart-4: var(--pebble);
+  --chart-5: var(--floe-deep);
+  --radius: 0.875rem;
+  --sidebar: var(--muted);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--snow);
+  --sidebar-accent: var(--floe);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 .dark {
@@ -127,5 +142,45 @@
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
+    letter-spacing: 0.02em;
+  }
+  ::selection {
+    background: var(--beak);
+    color: var(--ink);
+  }
+}
+
+/* 氷山（流氷）のような不揃いな角丸。トップの注目講座の画像だけに使う */
+.floe-shape {
+  border-radius: 2.25rem 3.5rem 2rem 3rem / 2rem 2.75rem 3.25rem 2.25rem;
+}
+/* トップのペンギンが流氷に飛び乗る（ページ表示時に1回だけ） */
+@keyframes penguin-hop {
+  0% {
+    transform: translateY(-28px) rotate(-8deg);
+    opacity: 0;
+  }
+  55% {
+    transform: translateY(4px) rotate(3deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+}
+.penguin-hop {
+  animation: penguin-hop 700ms cubic-bezier(0.3, 0.7, 0.4, 1) 250ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .penguin-hop {
+    animation: none;
   }
 }

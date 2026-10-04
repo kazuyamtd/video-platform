@@ -80,13 +80,13 @@ export default async function LessonPage(props: Props) {
             canMarkCompleted={!!viewer}
           />
         ) : (
-          <div className="flex aspect-video flex-col items-center justify-center gap-4 rounded-lg bg-muted p-6 text-center">
-            <p className="font-medium">このレッスンを視聴するには受講登録が必要です</p>
+          <div className="flex aspect-video flex-col items-center justify-center gap-4 rounded-2xl bg-floe p-6 text-center">
+            <p className="font-heading text-lg font-bold">このレッスンを見るには受講登録が必要です</p>
             <AccessCta course={outline} viewer={viewer} callbackPath={lessonPath} />
           </div>
         )}
 
-        <h1 className="mt-6 text-2xl font-bold">{meta.title}</h1>
+        <h1 className="mt-6 text-2xl leading-snug font-black sm:text-3xl">{meta.title}</h1>
         {lesson?.bodyMarkdown && <Markdown className="mt-4">{lesson.bodyMarkdown}</Markdown>}
         {lesson && lesson.attachments.length > 0 && (
           <AttachmentList attachments={lesson.attachments} />

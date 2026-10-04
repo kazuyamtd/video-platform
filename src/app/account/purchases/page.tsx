@@ -29,8 +29,8 @@ export default async function PurchasesPage() {
     .orderBy(desc(purchase.createdAt));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-2xl font-bold">購入履歴</h1>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+      <h1 className="text-3xl font-black">購入履歴</h1>
       {rows.length === 0 ? (
         <p className="mt-6 text-muted-foreground">
           購入した講座はまだありません。
@@ -39,7 +39,7 @@ export default async function PurchasesPage() {
           </Link>
         </p>
       ) : (
-        <ul className="mt-6 divide-y rounded-lg border">
+        <ul className="mt-8 divide-y overflow-hidden rounded-2xl border">
           {rows.map((row) => (
             <li key={row.id} className="flex items-center justify-between gap-4 p-4">
               <div>
