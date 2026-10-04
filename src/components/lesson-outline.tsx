@@ -1,19 +1,25 @@
-import { LockIcon, PlayCircleIcon } from "lucide-react";
+import { CheckCircle2Icon, LockIcon, PlayCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { CourseOutline } from "@/lib/courses";
 import { formatDuration } from "@/lib/format";
+import type { LessonProgressState } from "@/lib/progress-utils";
 import { cn } from "@/lib/utils";
 
-/** 講座の目次。courseAccessible=false のときプレビュー以外に鍵アイコンを付ける */
+/**
+ * 講座の目次。courseAccessible=false のときプレビュー以外に鍵アイコンを付ける。
+ * progress を渡すと完了済みレッスンにチェックを付ける。
+ */
 export function LessonOutline({
   outline,
   courseAccessible,
   currentLessonId,
+  progress,
 }: {
   outline: CourseOutline;
   courseAccessible: boolean;
   currentLessonId?: string;
+  progress?: Map<string, LessonProgressState>;
 }) {
   return (
     <div className="space-y-6">
@@ -32,7 +38,12 @@ export function LessonOutline({
                       l.id === currentLessonId && "bg-muted font-medium",
                     )}
                   >
-                    {open ? (
+                    {progress?.get(l.id)?.completedAt ? (
+                      <CheckCircle2Icon
+                        className="size-4 shrink-0 text-emerald-600"
+                        aria-label="完了"
+                      />
+                    ) : open ? (
                       <PlayCircleIcon className="size-4 shrink-0 text-muted-foreground" />
                     ) : (
                       <LockIcon className="size-4 shrink-0 text-muted-foreground" />

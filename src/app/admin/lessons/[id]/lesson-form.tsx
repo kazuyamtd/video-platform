@@ -5,10 +5,10 @@ import { FormMessage } from "@/components/auth-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { VimeoPlayer } from "@/components/vimeo-player";
 import type { Lesson } from "@/db/schema";
 import { updateLesson } from "../../actions";
+import { MarkdownEditor } from "./markdown-editor";
 
 export function LessonForm({ lesson }: { lesson: Lesson }) {
   const [state, action, pending] = useActionState(
@@ -50,15 +50,7 @@ export function LessonForm({ lesson }: { lesson: Lesson }) {
           <input type="checkbox" name="isPreview" defaultChecked={lesson.isPreview} />
           無料プレビュー（未購入・未ログインでも視聴可）
         </label>
-        <div className="space-y-1.5">
-          <Label htmlFor="bodyMarkdown">補足テキスト（Markdown）</Label>
-          <Textarea
-            id="bodyMarkdown"
-            name="bodyMarkdown"
-            rows={10}
-            defaultValue={lesson.bodyMarkdown}
-          />
-        </div>
+        <MarkdownEditor name="bodyMarkdown" defaultValue={lesson.bodyMarkdown} />
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={pending}>
             {pending ? "保存中…" : "保存"}

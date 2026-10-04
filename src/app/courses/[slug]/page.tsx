@@ -8,6 +8,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { canAccessCourse } from "@/lib/access";
 import { flattenLessons, getCourseOutline } from "@/lib/courses";
 import { ACCESS_LABELS, formatPrice } from "@/lib/format";
+import { getProgressMap } from "@/lib/progress";
+import {
+  type LessonProgressState,
+  resumeLessonId,
+  summarizeProgress,
+} from "@/lib/progress-utils";
 import { getSession, getViewer } from "@/lib/session";
 import { fulfillCheckoutSession, stripe } from "@/lib/stripe";
 
@@ -62,6 +68,12 @@ export default async function CoursePage({
   const firstLesson = lessons[0];
   const previewLesson = lessons.find((l) => l.isPreview);
 
+  const lessonIds = lessons.map((l) => l.id);
+  const progress =
+    viewer && accessible ? await getProgressMap(viewer.userId, lessonIds) : new Map<string, LessonProgressState>();
+  const summary = summarizeProgress(lessonIds, progress);
+  const resumeId = resumeLessonId(lessonIds, progress);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       {!outline.isPublished && (
@@ -89,10 +101,10 @@ export default async function CoursePage({
         {accessible ? (
           firstLesson && (
             <Link
-              href={`/courses/${slug}/lessons/${firstLesson.id}`}
+              href={`/courses/${slug}/lessons/${resumeId ?? firstLesson.id}`}
               className={buttonVariants({ size: "lg" })}
             >
-              受講する
+              {resumeId ? "続きから受講する" : progress.size > 0 ? "もう一度受講する" : "受講する"}
             </Link>
           )
         ) : (
@@ -110,11 +122,31 @@ export default async function CoursePage({
         )}
       </div>
 
+      {accessible && progress.size > 0 && (
+        <div className="mt-8">
+          <div className="flex justify-between text-sm">
+            <span>受講の進み具合</span>
+            <span className="text-muted-foreground">
+              {summary.completed} / {summary.total} レッスン完了（{summary.percent}%）
+            </span>
+          </div>
+          <div
+            className="mt-2 h-2 overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-valuenow={summary.percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <div className="h-full bg-emerald-600" style={{ width: `${summary.percent}%` }} />
+          </div>
+        </div>
+      )}
+
       <h2 className="mb-4 mt-12 text-xl font-semibold">カリキュラム</h2>
       {lessons.length === 0 ? (
         <p className="text-muted-foreground">レッスンは準備中です。</p>
       ) : (
-        <LessonOutline outline={outline} courseAccessible={accessible} />
+        <LessonOutline outline={outline} courseAccessible={accessible} progress={progress} />
       )}
     </div>
   );

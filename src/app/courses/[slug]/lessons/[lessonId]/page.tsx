@@ -5,11 +5,14 @@ import { notFound } from "next/navigation";
 import { AccessCta } from "@/components/access-cta";
 import { LessonOutline } from "@/components/lesson-outline";
 import { buttonVariants } from "@/components/ui/button";
-import { VimeoPlayer } from "@/components/vimeo-player";
+import { LessonViewer } from "@/components/lesson-viewer";
+import { Markdown } from "@/components/markdown";
 import { db } from "@/db";
 import { lesson as lessonTable } from "@/db/schema";
 import { canAccessCourse, canAccessLesson } from "@/lib/access";
 import { flattenLessons, getCourseOutline } from "@/lib/courses";
+import { getProgressMap } from "@/lib/progress";
+import type { LessonProgressState } from "@/lib/progress-utils";
 import { getSession, getViewer } from "@/lib/session";
 
 type Props = PageProps<"/courses/[slug]/lessons/[lessonId]">;
@@ -46,6 +49,11 @@ export default async function LessonPage(props: Props) {
     ? await db.query.lesson.findFirst({ where: eq(lessonTable.id, meta.id) })
     : null;
 
+  const progress = viewer
+    ? await getProgressMap(viewer.userId, lessons.map((l) => l.id))
+    : new Map<string, LessonProgressState>();
+  const current = progress.get(meta.id);
+
   const prev = lessons[index - 1];
   const next = lessons[index + 1];
   const lessonPath = `/courses/${slug}/lessons/${meta.id}`;
@@ -54,13 +62,14 @@ export default async function LessonPage(props: Props) {
     <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1fr_320px]">
       <div className="min-w-0">
         {lesson ? (
-          lesson.vimeoVideoId ? (
-            <VimeoPlayer video={lesson.vimeoVideoId} />
-          ) : (
-            <div className="flex aspect-video items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              動画は準備中です
-            </div>
-          )
+          <LessonViewer
+            // レッスンを移動したら完了状態などを作り直す
+            key={lesson.id}
+            lessonId={lesson.id}
+            video={lesson.vimeoVideoId}
+            initialCompleted={!!current?.completedAt}
+            canMarkCompleted={!!viewer}
+          />
         ) : (
           <div className="flex aspect-video flex-col items-center justify-center gap-4 rounded-lg bg-muted p-6 text-center">
             <p className="font-medium">このレッスンを視聴するには受講登録が必要です</p>
@@ -69,12 +78,7 @@ export default async function LessonPage(props: Props) {
         )}
 
         <h1 className="mt-6 text-2xl font-bold">{meta.title}</h1>
-        {lesson?.bodyMarkdown && (
-          // Markdown 表示はフェーズ4で実装。それまではプレーンテキスト表示
-          <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed">
-            {lesson.bodyMarkdown}
-          </div>
-        )}
+        {lesson?.bodyMarkdown && <Markdown className="mt-4">{lesson.bodyMarkdown}</Markdown>}
 
         <div className="mt-8 flex justify-between gap-4">
           {prev ? (
@@ -106,6 +110,7 @@ export default async function LessonPage(props: Props) {
           outline={outline}
           courseAccessible={canAccessCourse(outline, viewer)}
           currentLessonId={meta.id}
+          progress={progress}
         />
       </aside>
     </div>
