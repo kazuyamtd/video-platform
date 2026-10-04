@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className="space-y-3">
           <Logo />
           <p className="max-w-xs text-sm text-white/70">
-            ChatGPT の使い方から LP 制作まで。仕事に使えるスキルを、短い動画で学べるオンライン講座です。
+            今話題のAIの使い方から広告運用まで。仕事に使えるスキルを短い動画で学べるオンライン講座です。
           </p>
         </div>
         <nav className="flex gap-8 text-sm text-white/80">

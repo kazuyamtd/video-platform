@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "ペンギンラボ | 動画で学ぶオンライン講座", template: "%s | ペンギンラボ" },
-  description: "ChatGPT の使い方から LP 制作まで。仕事に使えるスキルを短い動画で学べるオンライン講座。",
+  description: "今話題のAIの使い方から広告運用まで。仕事に使えるスキルを短い動画で学べるオンライン講座。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
