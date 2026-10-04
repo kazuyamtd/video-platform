@@ -19,12 +19,11 @@ export default async function HomePage() {
           <div>
             {/* 文節ごとに折り返して、単語の途中で改行しないようにする */}
             <h1 className="text-[2.25rem] leading-[1.3] font-black sm:text-5xl sm:leading-[1.25] lg:text-[3.25rem]">
-              <span className="inline-block">動画を見ながら、</span>
-              <span className="inline-block">手を動かして</span>
-              <span className="inline-block">身につける。</span>
+              <span className="inline-block">すぐに使える</span>
+              <span className="inline-block">スキルを習得！</span>
             </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-ink/80">
-              ChatGPT の使い方や LP の作り方など、仕事にすぐ使えるスキルを短い動画で。まずは無料の講座から始められます。
+              今話題のAIの使い方や広告運用など、仕事にすぐ使えるスキルを短い動画で。まずは無料の講座から始められます。
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
